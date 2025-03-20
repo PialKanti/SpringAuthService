@@ -1,0 +1,38 @@
+/* Prevent auto fill background style */
+.default-form-input:-webkit-autofill,
+.default-form-input:-webkit-autofill:enabled,
+.default-form-input:-webkit-autofill:focus,
+.default-form-input:-webkit-autofill:hover {
+  transition: background-color 5000s ease-in-out 5000s;
+  @apply text-[inherit];
+}
+
+.default-form-input:disabled:-webkit-autofill {
+  --autofill-bg: inherit;
+  --autofill-text: inherit;
+
+  -webkit-text-fill-color: var(--autofill-text);
+  -webkit-box-shadow: 0 0 0px 1000px var(--autofill-bg) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-label {
+  pointer-events: none;
+  transform-origin: 0 50%;
+  transition:
+    color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms,
+    transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms,
+    background 100ms cubic-bezier(0, 0, 0.2, 1) 50ms;
+  @apply text-black;
+}
+
+/* Hide input number arrow */
+.hide-input-appearance::-webkit-outer-spin-button,
+.hide-input-appearance::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.hide-input-appearance[type='number'] {
+  -moz-appearance: textfield;
+}

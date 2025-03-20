@@ -1,0 +1,47 @@
+.raw-carousel-wrapper {
+  --item-per-slide: var(--initial-view);
+  --raw-carousel-gap: var(--initial-gap);
+
+  /* 
+    * items per slide 
+    * carousel gap
+  */
+  @screen sm {
+    --item-per-slide: var(--sm-view);
+    --raw-carousel-gap: var(--sm-gap);
+  }
+
+  @screen md {
+    --item-per-slide: var(--md-view);
+    --raw-carousel-gap: var(--md-gap);
+  }
+
+  @screen lg {
+    --item-per-slide: var(--lg-view);
+    --raw-carousel-gap: var(--lg-gap);
+  }
+
+  @screen xl {
+    --item-per-slide: var(--xl-view);
+    --raw-carousel-gap: var(--xl-gap);
+  }
+
+  @screen 2xl {
+    --item-per-slide: var(--2xl-view);
+    --raw-carousel-gap: var(--2xl-gap);
+  }
+}
+
+.raw-carousel {
+  --slide-size: calc(
+    calc(100% - (var(--raw-carousel-gap) * (var(--item-per-slide) - 1))) /
+      var(--item-per-slide)
+  );
+  gap: var(--raw-carousel-gap);
+  scrollbar-width: none;
+  display: flex;
+}
+
+.raw-carousel-item {
+  flex: 0 0 var(--slide-size);
+}

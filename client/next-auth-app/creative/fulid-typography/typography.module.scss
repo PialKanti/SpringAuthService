@@ -1,0 +1,74 @@
+// Modern Fluid Typography Using CSS Clamp
+// @see [https://www.smashingmagazine.com/2022/01/modern-fluid-typography-css-clamp/]
+
+// Note for developer: This mixin calculates fluid font sizes based on viewport dimensions.
+// It takes pixel values and converts them into rems.
+
+/// Computes fluid font-size.
+///
+/// @param {number} $minFontSize
+///   The minimum font size in pixels.
+/// @param {number} $maxFontSize
+///   The maximum font size in pixels.
+/// @param {number} $minViewport
+///   The minimum viewport width in pixels. Default is 768px.
+/// @param {number} $maxViewport
+///   The maximum viewport width in pixels. Default is 1920px.
+@mixin fluidFontSize(
+  $minFontSize,
+  $maxFontSize,
+  $minViewport: 768,
+  $maxViewport: 1920
+) {
+  $baseSize: 16;
+  $fontSizeRange: $maxFontSize - $minFontSize;
+  $viewportRange: $maxViewport - $minViewport;
+  $slope: calc($fontSizeRange / $viewportRange);
+  $intercept: $minFontSize - $slope * $minViewport;
+
+  font-size: #{calc($minFontSize/$baseSize)}rem;
+  font-size: unquote(
+    'clamp(#{calc($minFontSize/$baseSize)}rem, #{$slope*100}vw + #{calc($intercept/$baseSize)}rem, #{calc($maxFontSize/$baseSize)}rem)'
+  );
+}
+
+// Note for developer: This function computes fluid sizes based on viewport dimensions.
+// It takes pixel values and converts them into rems.
+
+/// Computes fluid size.
+///
+/// @param {number} $minSize
+///   The minimum size in pixels.
+/// @param {number} $maxSize
+///   The maximum size in pixels.
+/// @param {number} $minViewport
+///   The minimum viewport width in pixels. Default is 768px.
+/// @param {number} $maxViewport
+///   The maximum viewport width in pixels. Default is 1920px.
+@function fluidSize($minSize, $maxSize, $minViewport: 768, $maxViewport: 1920) {
+  $baseSize: 16;
+  $SizeRange: $maxSize - $minSize;
+  $viewportRange: $maxViewport - $minViewport;
+  $slope: calc($SizeRange / $viewportRange);
+  $intercept: $minSize - $slope * $minViewport;
+
+  @return unquote(
+    'clamp(#{calc($minSize/$baseSize)}rem, #{$slope*100}vw + #{calc($intercept/$baseSize)}rem, #{calc($maxSize/$baseSize)}rem)'
+  );
+}
+
+.hero {
+  @include fluidFontSize(40, 108);
+}
+.h1 {
+  @include fluidFontSize(32, 80);
+}
+.h2 {
+  @include fluidFontSize(24, 48);
+}
+.h3 {
+  @include fluidFontSize(20, 32);
+}
+.s1 {
+  @include fluidFontSize(20, 24);
+}

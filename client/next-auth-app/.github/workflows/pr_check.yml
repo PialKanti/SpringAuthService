@@ -1,0 +1,68 @@
+name: Check PR
+
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+
+# Cancel in-progress actions when a new action is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-code-quality:
+    if: ${{ github.event.label.name == 'in review' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 👈 Required to retrieve git history
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run tsc
+      - run: npm run lint
+      - run: npm run format:check
+  deploy-storybook:
+    needs: check-code-quality
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 👈 Required to retrieve git history
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - name: Publish to Chromatic
+        id: chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_TOKEN }}
+          onlyChanged: true
+      - name: Post Result Comments
+        uses: mshick/add-pr-comment@v2
+        with:
+          allow-repeats: true
+          message: |
+            ## PR Actions Summary
+            [Storybook](${{steps.chromatic.outputs.storybookUrl}})
+      # We are still keeping the summary print as a redundancy. We need to see
+      # what happens when we have too many comments and commmits in a PR
+      # Does this message get lost?
+      - name: Publish Summary
+        run: echo -e "[Storybook](${{steps.chromatic.outputs.storybookUrl}})" >> $GITHUB_STEP_SUMMARY

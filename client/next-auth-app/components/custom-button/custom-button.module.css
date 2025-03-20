@@ -1,0 +1,70 @@
+.dot-typing {
+  --dot-size: 0.25rem;
+  --animate-y: -0.5rem;
+  --dot-center: 9999px;
+  /*
+  In this calculation:
+  - The actual gap is the difference between 10px and 4px, which equals 6px.
+  - The gap between dots (dot-to-dot gap) is determined by subtracting the dot width from the CSS-defined gap.
+  */
+  --dot-gap: 10px;
+
+  display: block;
+  position: relative;
+  left: calc(var(--dot-center) * -1);
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 100vmax;
+  background-color: currentColor;
+  color: currentColor;
+  box-shadow:
+    calc(var(--dot-center) - var(--dot-gap)) 0 0 0 currentColor,
+    var(--dot-center) 0 0 0 currentColor,
+    calc(var(--dot-center) + var(--dot-gap)) 0 0 0 currentColor;
+  animation: dotTyping 1.5s infinite linear;
+}
+
+@keyframes dotTyping {
+  0% {
+    box-shadow:
+      calc(var(--dot-center) - var(--dot-gap)) 0 0 0 currentColor,
+      var(--dot-center) 0 0 0 currentColor,
+      calc(var(--dot-center) + var(--dot-gap)) 0 0 0 currentColor;
+  }
+  16.667% {
+    box-shadow:
+      calc(var(--dot-center) - var(--dot-gap)) var(--animate-y) 0 0 currentColor,
+      var(--dot-center) 0 0 0 currentColor,
+      calc(var(--dot-center) + var(--dot-gap)) 0 0 0 currentColor;
+  }
+  33.333% {
+    box-shadow:
+      calc(var(--dot-center) - var(--dot-gap)) 0 0 0 currentColor,
+      var(--dot-center) 0 0 0 currentColor,
+      calc(var(--dot-center) + var(--dot-gap)) 0 0 0 currentColor;
+  }
+  50% {
+    box-shadow:
+      calc(var(--dot-center) - var(--dot-gap)) 0 0 0 currentColor,
+      var(--dot-center) var(--animate-y) 0 0 currentColor,
+      calc(var(--dot-center) + var(--dot-gap)) 0 0 0 currentColor;
+  }
+  66.667% {
+    box-shadow:
+      calc(var(--dot-center) - var(--dot-gap)) 0 0 0 currentColor,
+      var(--dot-center) 0 0 0 currentColor,
+      calc(var(--dot-center) + var(--dot-gap)) 0 0 0 currentColor;
+  }
+  83.333% {
+    box-shadow:
+      calc(var(--dot-center) - var(--dot-gap)) 0 0 0 currentColor,
+      var(--dot-center) 0 0 0 currentColor,
+      calc(var(--dot-center) + var(--dot-gap)) var(--animate-y) 0 0 currentColor;
+  }
+  100% {
+    box-shadow:
+      calc(var(--dot-center) - var(--dot-gap)) 0 0 0 currentColor,
+      var(--dot-center) 0 0 0 currentColor,
+      calc(var(--dot-center) + var(--dot-gap)) 0 0 0 currentColor;
+  }
+}

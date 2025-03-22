@@ -1,4 +1,4 @@
-# Essential ui
+# Next auth app
 
 ## Resources:
 

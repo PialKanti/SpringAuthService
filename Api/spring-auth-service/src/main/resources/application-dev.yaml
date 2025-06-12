@@ -21,3 +21,8 @@ application:
     username: c405f4c0a04209
     password: 321482787ddcf7
     sender: no-reply@example.com
+
+  # Conditional features for application
+  features:
+    user-verification:
+      enabled: false

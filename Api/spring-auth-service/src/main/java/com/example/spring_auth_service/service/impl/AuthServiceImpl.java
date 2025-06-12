@@ -1,7 +1,6 @@
 package com.example.spring_auth_service.service.impl;
 
 import com.example.spring_auth_service.config.JwtConfig;
-import com.example.spring_auth_service.exception.EmailNotVerifiedException;
 import com.example.spring_auth_service.exception.VerificationTokenExpiredException;
 import com.example.spring_auth_service.exception.InvalidRefreshTokenException;
 import com.example.spring_auth_service.exception.RefreshTokenMissingException;
@@ -47,6 +46,7 @@ public class AuthServiceImpl implements AuthService {
     private final BlackListedTokenService blackListedTokenService;
     private final RefreshTokenService refreshTokenService;
     private final VerificationTokenService verificationTokenService;
+    private final UserVerificationService userVerificationService;
     private final EmailService emailService;
     private final JwtConfig jwtConfig;
     private final UserMapper userMapper;
@@ -60,21 +60,7 @@ public class AuthServiceImpl implements AuthService {
 
         VerificationToken verificationToken = verificationTokenService.create(registeredUser);
 
-        try {
-            emailService.sendMailAsync(user.getEmail(), "Verify your account",
-                    String.format("""
-                            Hi,<br/>
-                            Please verify your email by clicking the link below:<br/>
-                            <a href='http://localhost:8080/api/v1/auth/verify?token=%s'>Verify Now</a>
-                            <br/><br/>
-                            If you didn’t request this, ignore this email.
-                            <br/><br/>
-                            Thanks,<br/>
-                            Auth Service Team
-                            """, verificationToken.getToken()));
-        } catch (MessagingException e) {
-            log.error("Error while sending verification email. Message = {}", e.getMessage(), e);
-        }
+        userVerificationService.sendVerificationEmail(user.getEmail(), verificationToken.getToken());
 
         return userMapper.userToRegisteredUserResponse(registeredUser);
     }
@@ -85,10 +71,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = (User) authentication.getPrincipal();
 
-        //todo enable this after getting a solution for smtp
-        /*if(!user.isVerified()) {
-            throw new EmailNotVerifiedException(EMAIL_NOT_VERIFIED.getMessage());
-        }*/
+        userVerificationService.checkUserVerified(user);
 
         String accessToken = jwtService.generateToken(user);
         RefreshToken refreshToken = refreshTokenService.create(request.username());

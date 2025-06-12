@@ -21,3 +21,8 @@ application:
     username: smtp@mailtrap.io
     password: b7235bb0e82b2ace73e959c96a8f65ea
     sender: hello@demomailtrap.co
+
+  # Conditional features for application
+  features:
+    user-verification:
+      enabled: true

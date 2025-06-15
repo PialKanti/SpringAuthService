@@ -7,7 +7,7 @@ import com.example.spring_auth_service.service.UserVerificationService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import static com.example.spring_auth_service.model.enums.ExceptionConstant.EMAIL_NOT_VERIFIED;
@@ -15,12 +15,17 @@ import static com.example.spring_auth_service.model.enums.ExceptionConstant.EMAI
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@ConditionalOnProperty(name = "application.features.user-verification.enabled", havingValue = "true")
 public class UserVerificationServiceImpl implements UserVerificationService {
+    @Value("${application.features.user-verification.enabled}")
+    private boolean isVerificationEnabled;
     private final EmailService emailService;
 
     @Override
-    public void sendVerificationEmail(String email, String verificationToken) {
+    public void sendVerificationLink(String email, String verificationToken) {
+        if(!isVerificationEnabled) {
+            return;
+        }
+
         try {
             emailService.sendMailAsync(email, "Verify your account",
                     String.format("""
@@ -39,7 +44,11 @@ public class UserVerificationServiceImpl implements UserVerificationService {
     }
 
     @Override
-    public void checkUserVerified(User user) {
+    public void ensureUserVerified(User user) {
+        if(!isVerificationEnabled) {
+            return;
+        }
+
         if(!user.isVerified()) {
             throw new EmailNotVerifiedException(EMAIL_NOT_VERIFIED.getMessage());
         }

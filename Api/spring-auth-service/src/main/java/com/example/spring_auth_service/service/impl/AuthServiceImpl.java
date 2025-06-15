@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
 
         VerificationToken verificationToken = verificationTokenService.create(registeredUser);
 
-        userVerificationService.sendVerificationEmail(user.getEmail(), verificationToken.getToken());
+        userVerificationService.sendVerificationLink(user.getEmail(), verificationToken.getToken());
 
         return userMapper.userToRegisteredUserResponse(registeredUser);
     }
@@ -71,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = (User) authentication.getPrincipal();
 
-        userVerificationService.checkUserVerified(user);
+        userVerificationService.ensureUserVerified(user);
 
         String accessToken = jwtService.generateToken(user);
         RefreshToken refreshToken = refreshTokenService.create(request.username());
